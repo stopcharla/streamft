@@ -18,7 +18,7 @@ export class WordPhonetics {
   partOfSpeech: string;
 
   @Column({
-    type: '',
+    type: 'varchar',
     length: 3000,
   })
   sourceURL: string;
