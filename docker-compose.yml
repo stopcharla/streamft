@@ -1,0 +1,56 @@
+version: '3'
+services:
+  main:
+    container_name: ts-nest-project
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+      - POSTGRES_HOST=host.docker.internal
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=test
+    ports:
+      - 3000:3000
+    networks:
+      - postgres
+    command: npm run start:dev
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+  pgadmin:
+    links:
+      - postgres:postgres
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+networks:
+  postgres:
+    driver: bridge
+    
